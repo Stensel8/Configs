@@ -1,0 +1,20 @@
+[Unit]
+Description=Tor Snowflake Proxy
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/thetorproject/snowflake-proxy:latest
+ContainerName=systemd-snowflake-proxy
+AutoUpdate=registry
+
+Environment=TZ=Europe/Amsterdam
+
+Volume=/etc/localtime:/etc/localtime:ro
+
+[Service]
+Restart=on-failure
+TimeoutStopSec=60
+
+[Install]
+WantedBy=default.target

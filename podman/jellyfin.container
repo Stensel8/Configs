@@ -1,0 +1,35 @@
+[Unit]
+Description=Jellyfin Media Server
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/jellyfin/jellyfin:latest
+ContainerName=systemd-jellyfin
+AutoUpdate=registry
+
+Environment=UID=1000
+Environment=GID=1000
+Environment=TZ=Europe/Amsterdam
+UserNS=keep-id
+
+# Hardware acceleration (AMD VA-API)
+PodmanArgs=--device=/dev/dri
+PodmanArgs=--group-add=keep-groups
+PodmanArgs=--security-opt=label=disable
+
+Network=torrent-network
+PublishPort=8096:8096
+
+Volume=/srv/media/movies:/media/movies:z
+Volume=/srv/media/tv:/media/tv:z
+Volume=%h/containers/jellyfin/config:/config:Z
+Volume=%h/containers/jellyfin/cache:/cache:Z
+Volume=/etc/localtime:/etc/localtime:ro
+
+[Service]
+Restart=on-failure
+TimeoutStopSec=120
+
+[Install]
+WantedBy=default.target

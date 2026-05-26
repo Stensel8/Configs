@@ -14,3 +14,9 @@ My server configuration files for reference and reuse.
 - ML-KEM 768 + curve25519 key exchange (post-quantum hardened)
 - Password authentication disabled — public key only
 - All forwarding (TCP, agent, X11, tunnel) disabled
+
+### Podman Quadlets
+- Rootless user-level containers managed by systemd via Quadlet
+- Media stack: Jellyfin, Sonarr, Radarr, Lidarr, Bazarr, Prowlarr, qBittorrent, FlareSolverr, Seerr, Recyclarr
+- Other: Minecraft (PaperMC), Uptime Kuma, Tor Snowflake Proxy
+- See `podman/README.md` for linger setup and service management

@@ -1,0 +1,63 @@
+[Unit]
+Description=PaperMC Minecraft Server
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+# itzg/minecraft-server is the standard image for Minecraft containers
+# java25-jdk = Java 25 + JDK tools (jstat, jstack, jps)
+Image=docker.io/itzg/minecraft-server:java25-jdk
+ContainerName=systemd-minecraft
+AutoUpdate=registry
+
+# --- Resource Limits ---
+# Adjust MEMORY and --cpus to match your hardware.
+# Container memory limit = JVM heap + ~1.5 GB overhead.
+Environment=MEMORY=6G
+PodmanArgs=--memory=7500M
+PodmanArgs=--cpus=4
+
+# --- Server Configuration ---
+Environment=EULA=TRUE
+Environment=TYPE=PAPER
+Environment=VERSION=1.21.11
+# G1GC with Aikar flags — recommended for heap sizes above 4 GB
+Environment=USE_AIKAR_FLAGS=true
+Environment=MAX_TICK_TIME=-1
+Environment=ONLINE_MODE=TRUE
+Environment=MOTD=A Minecraft survival server
+# RCON disabled (deprecated in PaperMC; mc-server-runner uses the console pipe)
+Environment=ENABLE_RCON=false
+Environment=CREATE_CONSOLE_IN_PIPE=true
+
+# --- Autopause ---
+# Disabled — causes issues with container restarts
+Environment=ENABLE_AUTOPAUSE=FALSE
+
+# --- User & Permissions ---
+Environment=UID=1000
+Environment=GID=1000
+UserNS=keep-id
+
+# --- Network & Ports ---
+PublishPort=25565:25565
+
+# --- Volumes ---
+# %h = home directory of the user running the service
+# :Z = SELinux private unshared label (required on Fedora/RHEL)
+Volume=%h/containers/minecraft:/data:Z
+Volume=/srv/backups/minecraft.example.com:/srv/backups/minecraft.example.com:Z
+
+# --- Timezone ---
+Volume=/etc/localtime:/etc/localtime:ro
+Environment=TZ=Europe/Amsterdam
+
+[Service]
+# Restart on crash only, not on manual stop
+Restart=on-failure
+# Allow time for clean shutdown (save-all) on reboot
+TimeoutStopSec=120
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
