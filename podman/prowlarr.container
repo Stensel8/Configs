@@ -1,0 +1,26 @@
+[Unit]
+Description=Prowlarr Indexer Manager
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=lscr.io/linuxserver/prowlarr:latest
+ContainerName=systemd-prowlarr
+AutoUpdate=registry
+Network=torrent-network
+
+Environment=PUID=1000
+Environment=PGID=1000
+Environment=TZ=Europe/Amsterdam
+
+PublishPort=9696:9696
+
+Volume=%h/containers/prowlarr/config:/config:Z
+Volume=/etc/localtime:/etc/localtime:ro
+
+[Service]
+Restart=on-failure
+TimeoutStopSec=60
+
+[Install]
+WantedBy=default.target

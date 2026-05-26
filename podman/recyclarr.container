@@ -1,0 +1,22 @@
+[Unit]
+Description=Recyclarr - TRaSH Guides Sync
+After=network-online.target radarr.service sonarr.service
+Wants=network-online.target
+
+[Container]
+User=1000:1000
+Image=ghcr.io/recyclarr/recyclarr:latest
+ContainerName=recyclarr
+AutoUpdate=registry
+Exec=sync
+
+Environment=TZ=Europe/Amsterdam
+Volume=%h/containers/recyclarr:/config:Z
+Network=torrent-network
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+
+[Install]
+WantedBy=default.target

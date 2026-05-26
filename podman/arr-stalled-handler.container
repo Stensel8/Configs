@@ -1,0 +1,29 @@
+[Unit]
+Description=Arr Stalled Download Handler
+After=network-online.target radarr.service sonarr.service qbittorrent.service
+Wants=network-online.target
+
+[Container]
+Image=docker.io/tommythebeast/arrstalledhandler:latest
+ContainerName=systemd-arr-stalled-handler
+AutoUpdate=registry
+
+Environment=RADARR_URL=http://systemd-radarr:7878
+Environment=RADARR_API_KEY=<your-radarr-api-key>
+Environment=SONARR_URL=http://systemd-sonarr:8989
+Environment=SONARR_API_KEY=<your-sonarr-api-key>
+Environment=STALLED_TIMEOUT=3600
+Environment=STALLED_ACTION=DELETE_AND_SEARCH
+Environment=RUN_INTERVAL=300
+Environment=COUNT_DOWNLOADING_METADATA_AS_STALLED=true
+Environment=VERBOSE=false
+
+Network=torrent-network
+Volume=%h/containers/arr-stalled-handler:/data:Z
+
+[Service]
+Restart=on-failure
+TimeoutStopSec=60
+
+[Install]
+WantedBy=default.target

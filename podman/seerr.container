@@ -1,0 +1,25 @@
+[Unit]
+Description=Seerr Request Manager
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/seerr/seerr:latest
+ContainerName=systemd-seerr
+AutoUpdate=registry
+Network=torrent-network
+
+UserNS=keep-id
+
+PublishPort=5055:5055
+
+Volume=%h/containers/seerr/config:/app/config:z
+Volume=/etc/localtime:/etc/localtime:ro
+Environment=TZ=Europe/Amsterdam
+
+[Service]
+Restart=on-failure
+TimeoutStopSec=60
+
+[Install]
+WantedBy=default.target
